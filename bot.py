@@ -35,9 +35,19 @@ async def info(ctx, user=None):
     if user is None:  # get info about the user who typed info
         # TODO pyrebase error checking here
         target = dict(db.child("users").child(str(ctx.message.author.id)).get().val())
+        print(target)
         embed.add_field(name=f"{target['username']}", value=f"checked in at {target['checkin-time']}", inline=True)
-        print(f"[LOG] user: {target['username']}")
-        print(f"[LOG] checkedinin at: {target['checkin-time']}")
+        embed.add_field(name=":bar_chart: polls responded to", value=f"{target['polls']}", inline=False) 
+        # TODO start each user with a the schedule
+        events = ""
+        for event in target['events'].keys():
+            if target['events'][event] == "True":    
+                events += f"{event}: ✅\n"
+            else: 
+                events += f"{event}: ❌\n"
+            
+        embed.add_field(name=f":reminder_ribbon: mini events and workshops attended", value=events, inline=False)
+        std_footer(embed) # add the footer to the help message
         await ctx.send(embed=embed)
 
     
@@ -58,12 +68,12 @@ async def checkin(ctx):
         await ctx.send(f"**{user}** has already checked in")
 
     else:
-
         payload = { 
             "username": f"@{ctx.message.author.name}",  
             "id": ctx.message.author.id,
             "checkin-time": datetime.now().strftime("%d-%b-%Y (%H:%M:%S.%f)"),
-            "events": []
+            "events": WORKSHOP_SCHEDULE,
+            "polls": 0
             }
         db.child("users").child(payload['id']).set(payload)
         await ctx.send(f"checked in **{payload['username']}**")

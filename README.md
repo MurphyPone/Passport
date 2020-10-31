@@ -11,4 +11,6 @@ A tool for fostering hacker engagement at hackathons
 - [x] set up a discord bot 
 - [ ] connect the bot to firebase
     - [ ] TODO use a service account
+    - [ ] helper for is_checked_in to prefix all functions
+    - [ ] smart time stamps for workshops 
 - [ ] make some graphics
